@@ -2,23 +2,12 @@ import { useState, useCallback, memo, useMemo } from 'react';
 import { Group } from '@visx/group';
 import { HeatmapRect } from '@visx/heatmap';
 import { scaleLinear } from '@visx/scale';
-import { BinDatum, ColumnDatum, HeatmapProps, TooltipData } from './types';
+
+import { WEEKS_IN_YEAR, generateWeekData } from './generate';
+import { HeatmapProps, TooltipData } from './types';
 
 const HEIGHT = 200;  // Reduced since we only need 7 rows
-const WEEKS_IN_YEAR = 52;
-const DAYS_IN_WEEK = 7;
 const MARGIN = { top: 40, right: 0, bottom: 20, left: 40 };
-
-// Generate fake data
-const generateWeekData = (): ColumnDatum[] => {
-  return Array.from({length: WEEKS_IN_YEAR}, (_, weekIndex) => ({
-    bin: weekIndex, // each day
-    bins: Array.from({length: DAYS_IN_WEEK}, (_, dayIndex) => ({
-      day: dayIndex,
-      count: Math.floor(Math.random() * 100) // random activity count
-    }))
-  }))
-};
 
 const Tooltip = memo(({ data }: { data: TooltipData | null }) => {
   if (!data) return null;

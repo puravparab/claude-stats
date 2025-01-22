@@ -6,6 +6,12 @@ export interface BinDatum {
 export interface ColumnDatum {
   bin: number; // week (0-51)
   bins: BinDatum[];
+	// year: number;
+}
+
+export interface YeatData {
+	year: number;
+	data: ColumnDatum[];
 }
 
 export interface HeatmapProps {
