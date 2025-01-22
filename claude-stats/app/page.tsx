@@ -24,16 +24,16 @@ export default function Home() {
     <div 
       className="
         font-serif
-        min-h-screen
-        flex
-        items-start
-        justify-center
-        align-items-center
-        m-2
+        flex flex-col items-center justify-start
+        min-h-screen m-2
       "
     >
       <main 
-        className="flex flex-col justify-center align-top w-full sm:w-2/3 gap m-8"
+        className="
+          flex flex-col justify-center items-center
+          w-full 
+          sm:w-2/3 gap-8 m-8
+        "
       >
         <h1 className="
           text-center font-extrabold text-lg sm:text-5xl py-2

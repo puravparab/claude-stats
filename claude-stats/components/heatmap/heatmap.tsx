@@ -1,39 +1,24 @@
-import { useState, useCallback, memo, useMemo } from 'react';
+"use client"
+
+import { useState, useCallback } from 'react';
 import { Group } from '@visx/group';
 import { HeatmapRect } from '@visx/heatmap';
 import { scaleLinear } from '@visx/scale';
 
-import { WEEKS_IN_YEAR, generateMultiYearData } from './generate';
-import { HeatmapProps, TooltipData } from './types';
+import { generateMultiYearData } from './generate';
+import { Tooltip } from './tooltip';
+import { YearData, HeatmapProps, TooltipData } from './types';
+import { WEEKS_IN_YEAR, YEAR_HEIGHT, MARGIN, DAY_LABELS, MONTH_LABELS } from './constant';
 
-const YEAR_HEIGHT = 200;  // Reduced since we only need 7 rows
-const MARGIN = { top: 40, right: 0, bottom: 20, left: 40 };
-
-const Tooltip = memo(({ data }: { data: TooltipData | null }) => {
-  if (!data) return null;
-  return (
-    <div 
-      className="absolute flex flex-col bg-white w-24 border-2 border-stone-50 border-rounded px-2 py-2 rounded shadow-lg text-sm z-40 pointer-events-none"
-      style={{
-        left: data.x - 250 + 'px',
-        top: data.y - 100 + 'px',
-      }}
-    >
-      <p>{data.date.toLocaleDateString()}</p>
-      <p>Week: {data.week}</p>
-      <p>Count: {data.count}</p>
-    </div>
-  );
-});
 
 const Heatmap: React.FC<HeatmapProps> = ({ width }) => {
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
 
-  const handleMouseEnter = useCallback((e: React.MouseEvent, bin: any, dayLabels: string[]) => {
+  const handleMouseEnter = useCallback((e: React.MouseEvent, bin: any, DAY_LABELS: string[]) => {
     const rect = e.currentTarget.getBoundingClientRect();
     setTooltip({
       week: bin.column + 1,
-      day: dayLabels[bin.row],
+      day: DAY_LABELS[bin.row],
       count: bin.count,
       date: bin.date,
       x: rect.left,
@@ -45,10 +30,12 @@ const Heatmap: React.FC<HeatmapProps> = ({ width }) => {
     setTooltip(null);
   }, []);
 
-  const yearData = useMemo(() => generateMultiYearData(), []);
+  const [yearData, setYearData] = useState<YearData[]>(() => {
+    return generateMultiYearData();
+  });
 
   // Calculate bin sizes
-  const binWidth = Math.min((width - MARGIN.left - MARGIN.right) / WEEKS_IN_YEAR, 20);
+  const binWidth = Math.max((width - MARGIN.left - MARGIN.right) / WEEKS_IN_YEAR, 10);
   const binHeight = binWidth;
   
   // Scales
@@ -66,13 +53,6 @@ const Heatmap: React.FC<HeatmapProps> = ({ width }) => {
     domain: [0, 100],
     range: [0.1, 1],
   });
-
-  // Day labels
-  const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  // Month labels
-  const monthLabels = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-  ];
 
   const totalHeight = YEAR_HEIGHT * yearData.length + MARGIN.top + MARGIN.bottom;
 
@@ -97,7 +77,7 @@ const Heatmap: React.FC<HeatmapProps> = ({ width }) => {
             </text>
 
             {/* Day labels */}
-            {dayLabels.map((day, i) => (
+            {DAY_LABELS.map((day, i) => (
               <text
                 key={`day-${yearItem.year}-${i}`}
                 x={-10}
@@ -111,7 +91,7 @@ const Heatmap: React.FC<HeatmapProps> = ({ width }) => {
             ))}
 
             {/* Month labels */}
-            {monthLabels.map((month, i) => (
+            {MONTH_LABELS.map((month, i) => (
               <text
                 key={`month-${yearItem.year}-${i}`}
                 x={xScale(i * 4.3)}
@@ -150,7 +130,7 @@ const Heatmap: React.FC<HeatmapProps> = ({ width }) => {
                         fill={bin.color}
                         opacity={bin.opacity}
                         rx={2}
-                        onMouseEnter={(e) => handleMouseEnter(e, {...bin, date: binData.date}, dayLabels)}
+                        onMouseEnter={(e) => handleMouseEnter(e, {...bin, date: binData.date}, DAY_LABELS)}
                         onMouseLeave={handleMouseLeave}
                       />
                     );
@@ -161,6 +141,7 @@ const Heatmap: React.FC<HeatmapProps> = ({ width }) => {
           </Group>
         ))}
       </svg>
+
       <Tooltip data={tooltip} />
     </div>
   );

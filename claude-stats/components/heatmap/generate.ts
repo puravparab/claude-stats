@@ -1,20 +1,12 @@
+"use client"
+
 import { BinDatum, ColumnDatum, YearData } from './types';
 
-export const WEEKS_IN_YEAR = 53; // 53 to handle edge cases
-export const DAYS_IN_WEEK = 7;
-
 const getDayOfWeek = (date: Date): number => date.getDay();
-
-const getStartOfWeek = (date: Date): Date => {
-  const d = new Date(date);
-  d.setDate(d.getDate() - d.getDay()); // Set to Sunday
-  return d;
-};
 
 // Generate fake data
 const generateYearData = (year: number): ColumnDatum[] => {
 	const startDate = new Date(year, 0, 1);  // January 1st
-  const endDate = new Date(year, 11, 31);  // December 31st
 
 	// Get the first sunday of the calendar view
 	const firstSunday = new Date(startDate);
@@ -26,7 +18,7 @@ const generateYearData = (year: number): ColumnDatum[] => {
   let currentDate = new Date(firstSunday);
   let weekIndex = 0;
 
-	while (weekIndex < 53) { // Using 53 to ensure we cover all possible weeks
+	while (weekIndex < 53) {
     const bins: BinDatum[] = [];
     
     // Generate data for each day of the week
@@ -54,6 +46,7 @@ const generateYearData = (year: number): ColumnDatum[] => {
     // Move to next week
     currentDate.setDate(currentDate.getDate() + 7);
     weekIndex++;
+		console.log("calculating..")
   }
 
   return weeks;
@@ -65,5 +58,5 @@ export const generateMultiYearData = (): YearData[] => {
   return [
     { year: currentYear, data: generateYearData(currentYear) },
     { year: currentYear - 1, data: generateYearData(currentYear - 1) }
-  ].sort((a, b) => b.year - a.year);
+  ];
 };
