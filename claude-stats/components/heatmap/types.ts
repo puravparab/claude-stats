@@ -18,6 +18,7 @@ export interface YearData {
 
 export interface HeatmapProps {
   width: number;
+  data: YearData[];
 }
 
 export interface TooltipData {

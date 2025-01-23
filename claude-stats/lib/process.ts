@@ -14,15 +14,12 @@ export const processConversations = (data: Conversation[]): DailyCount => {
         console.log('Invalid conversation:', conversation);
         return;
       }
-
       conversation.chat_messages.forEach(message => {
         const date = new Date(message.created_at);
         const dateKey = date.toISOString().split('T')[0];
         dailyCounts[dateKey] = (dailyCounts[dateKey] || 0) + 1;
       });
     });
-
-    console.log('Daily counts:', dailyCounts);
     return dailyCounts;
   } catch (error) {
     console.error('Error processing conversations:', error);

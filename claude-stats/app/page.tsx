@@ -1,14 +1,18 @@
 "use client"
 
 import { useRef, useEffect, useState } from 'react';
-import Heatmap from "@/components/heatmap/heatmap"
 import { DailyCount } from '@/lib/types';
 import { processConversations } from '@/lib/process';
+import { convertToHeatmapData } from '@/lib/convert';
+import Heatmap from "@/components/heatmap/heatmap"
+import { YearData } from '@/components/heatmap/types';
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
-  const [data, setData] = useState<DailyCount>({});
+  const [data, setData] = useState<YearData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -24,14 +28,25 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     fetch('/api/conversations')
-      .then(res => res.json())
-      .then(conversations => {
-        console.log('API response:', conversations);
-        const processedData = processConversations(conversations);
-        setData(processedData);
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch data');
+        return res.json();
       })
-      .catch(console.error);
+      .then(conversations => {
+        const processedData = processConversations(conversations);
+        const heatmapData = convertToHeatmapData(processedData);
+        setData(heatmapData);
+        setError(null);
+      })
+      .catch(err => {
+        console.error('Error:', err);
+        setError('Failed to load data');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   return (
@@ -58,7 +73,11 @@ export default function Home() {
           ref={containerRef}
           className="w-full p-2 z-30"
         >
-          {width > 0 && <Heatmap width={width} />}
+          {loading && <div>Loading...</div>}
+          {error && <div className="text-red-500">{error}</div>}
+          {!loading && !error && width > 0 && data.length > 0 && (
+            <Heatmap width={width} data={data} />
+          )}
         </div>
       </main>
       <footer className="">

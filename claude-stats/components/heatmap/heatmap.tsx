@@ -11,7 +11,7 @@ import { YearData, HeatmapProps, TooltipData } from './types';
 import { WEEKS_IN_YEAR, YEAR_HEIGHT, MARGIN, DAY_LABELS, MONTH_LABELS } from './constant';
 
 
-const Heatmap: React.FC<HeatmapProps> = ({ width }) => {
+const Heatmap: React.FC<HeatmapProps> = ({ width, data }) => {
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
 
   const handleMouseEnter = useCallback((e: React.MouseEvent, bin: any, DAY_LABELS: string[]) => {
@@ -30,10 +30,6 @@ const Heatmap: React.FC<HeatmapProps> = ({ width }) => {
     setTooltip(null);
   }, []);
 
-  const [yearData, setYearData] = useState<YearData[]>(() => {
-    return generateMultiYearData();
-  });
-
   // Calculate bin sizes
   const binWidth = Math.max((width - MARGIN.left - MARGIN.right) / WEEKS_IN_YEAR, 10);
   const binHeight = binWidth;
@@ -45,7 +41,7 @@ const Heatmap: React.FC<HeatmapProps> = ({ width }) => {
   // Color scale
   const colorScale = scaleLinear<string>({
     domain: [0, 100],
-    range: ['#bab7b1', '#db6b47'],
+    range: ['#d4bdb6', '#d97757'],
   });
   
   // Opacity scale (optional)
@@ -54,12 +50,12 @@ const Heatmap: React.FC<HeatmapProps> = ({ width }) => {
     range: [0.1, 1],
   });
 
-  const totalHeight = YEAR_HEIGHT * yearData.length + MARGIN.top + MARGIN.bottom;
+  const totalHeight = YEAR_HEIGHT * data.length + MARGIN.top + MARGIN.bottom;
 
   return (
     <div className="relative">
       <svg width={width} height={totalHeight}>
-        {yearData.map((yearItem, yearIndex) => (
+        {data.map((yearItem, yearIndex) => (
           <Group 
             key={yearItem.year} 
             top={MARGIN.top + yearIndex * YEAR_HEIGHT} 
