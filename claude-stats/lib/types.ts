@@ -23,3 +23,14 @@ export interface Conversation {
 export interface DailyCount {
   [date: string]: number;
 }
+
+export interface ConversationStats {
+  totalConversations: number;
+  totalMessages: number;
+  byYear: {
+    [year: number]: {
+      conversations: number;
+      messages: number;
+    }
+  };
+}

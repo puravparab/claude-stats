@@ -1,8 +1,8 @@
 "use client"
 
 import { useRef, useEffect, useState } from 'react';
-import { DailyCount } from '@/lib/types';
-import { processConversations } from '@/lib/process';
+import { DailyCount, ConversationStats } from '@/lib/types';
+import { processConversations, calculateStats } from '@/lib/process';
 import { convertToHeatmapData } from '@/lib/convert';
 import Heatmap from "@/components/heatmap/heatmap"
 import { YearData } from '@/components/heatmap/types';
@@ -11,6 +11,7 @@ export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
   const [data, setData] = useState<YearData[]>([]);
+  const [stats, setStats] = useState<ConversationStats | null>(null);;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,7 +38,9 @@ export default function Home() {
       .then(conversations => {
         const processedData = processConversations(conversations);
         const heatmapData = convertToHeatmapData(processedData);
+        const statsData = calculateStats(conversations);
         setData(heatmapData);
+        setStats(statsData);
         setError(null);
       })
       .catch(err => {
@@ -75,8 +78,8 @@ export default function Home() {
         >
           {loading && <div>Loading...</div>}
           {error && <div className="text-red-500">{error}</div>}
-          {!loading && !error && width > 0 && data.length > 0 && (
-            <Heatmap width={width} data={data} />
+          {!loading && !error && width > 0 && data.length > 0 && stats && (
+            <Heatmap width={width} data={data} stats={stats} />
           )}
         </div>
       </main>

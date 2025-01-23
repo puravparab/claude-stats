@@ -1,3 +1,5 @@
+import { ConversationStats} from '@/lib/types';
+
 export interface BinDatum {
   count: number; // conversations each day
   day: number; // day of the week (0-6)
@@ -19,6 +21,7 @@ export interface YearData {
 export interface HeatmapProps {
   width: number;
   data: YearData[];
+  stats: ConversationStats;
 }
 
 export interface TooltipData {

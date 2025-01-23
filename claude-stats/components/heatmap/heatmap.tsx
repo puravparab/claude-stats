@@ -11,7 +11,7 @@ import { YearData, HeatmapProps, TooltipData } from './types';
 import { WEEKS_IN_YEAR, YEAR_HEIGHT, MARGIN, DAY_LABELS, MONTH_LABELS } from './constant';
 
 
-const Heatmap: React.FC<HeatmapProps> = ({ width, data }) => {
+const Heatmap: React.FC<HeatmapProps> = ({ width, data, stats }) => {
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
 
   const handleMouseEnter = useCallback((e: React.MouseEvent, bin: any, DAY_LABELS: string[]) => {
@@ -64,12 +64,13 @@ const Heatmap: React.FC<HeatmapProps> = ({ width, data }) => {
             {/* Year label */}
             <text
               x={-30}
-              y={-30}
+              y={-28}
               textAnchor="start"
-              fontSize={18}
+              fontSize={16}
               fontWeight="bold"
+              fontFamily="font-serif"
             >
-              {yearItem.year}
+              {`${yearItem.year}: ${stats.byYear[yearItem.year]?.conversations || 0} conversations and ${stats.byYear[yearItem.year]?.messages || 0} messages`}
             </text>
 
             {/* Day labels */}
