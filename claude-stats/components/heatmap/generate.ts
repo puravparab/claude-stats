@@ -46,7 +46,6 @@ const generateYearData = (year: number): ColumnDatum[] => {
     // Move to next week
     currentDate.setDate(currentDate.getDate() + 7);
     weekIndex++;
-		console.log("calculating..")
   }
 
   return weeks;

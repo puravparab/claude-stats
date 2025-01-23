@@ -1,11 +1,14 @@
 "use client"
 
 import { useRef, useEffect, useState } from 'react';
-import Heatmap from "../components/heatmap/heatmap"
+import Heatmap from "@/components/heatmap/heatmap"
+import { DailyCount } from '@/lib/types';
+import { processConversations } from '@/lib/process';
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
+  const [data, setData] = useState<DailyCount>({});
 
   useEffect(() => {
     if (containerRef.current) {
@@ -18,6 +21,17 @@ export default function Home() {
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/conversations')
+      .then(res => res.json())
+      .then(conversations => {
+        console.log('API response:', conversations);
+        const processedData = processConversations(conversations);
+        setData(processedData);
+      })
+      .catch(console.error);
   }, []);
 
   return (
