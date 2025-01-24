@@ -22,7 +22,9 @@ export interface YearData {
 
 export interface HeatmapProps {
   width: number;
-  data: YearData[];
+  data: YearData;
+  minColor: string;
+  maxColor: string;
 }
 
 export interface TooltipData {
@@ -32,4 +34,19 @@ export interface TooltipData {
   count: number;
   x: number;
   y: number;
+}
+
+export interface TooltipProps {
+  data: TooltipData | null;
+  offsetX?: number;
+  offsetY?: number;
+}
+
+export interface HeatmapContainerProps {
+  data: YearData[];
+
+}
+
+export interface HeatmapStatsProps {
+  yearData: YearData;
 }

@@ -1,32 +1,14 @@
 "use client"
 
-import { useRef, useEffect, useState } from 'react';
-import { DailyCount, ConversationStats } from '@/lib/types';
-// import { processConversations, calculateStats } from '@/lib/process';
+import { useEffect, useState } from 'react';
 import getHeatmapData from '@/lib/prepare_data';
-import Heatmap from "@/components/heatmap/heatmap"
+import HeatmapContainer from "@/components/heatmap/heatmapContainer"
 import { YearData } from '@/components/heatmap/types';
-import processJson from '@/lib/process_json';
 
 export default function Home() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [width, setWidth] = useState(0);
   const [data, setData] = useState<YearData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (containerRef.current) {
-      setWidth(containerRef.current.offsetWidth);
-    }
-    const handleResize = () => {
-      if (containerRef.current) {
-        setWidth(containerRef.current.offsetWidth);
-      }
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -39,7 +21,6 @@ export default function Home() {
         return res.json();
       })
       .then(conversations => {
-        console.log(conversations);
         const heatmapData = getHeatmapData(conversations);
         console.log(heatmapData)
         setData(heatmapData);
@@ -70,23 +51,15 @@ export default function Home() {
         "
       >
         <h1 className="
-          text-center font-extrabold text-lg sm:text-5xl py-2
+          text-center font-extrabold text-2xl sm:text-5xl py-2
         ">
           Claude Stats
         </h1>
-        <div
-          ref={containerRef}
-          className="w-full p-2 z-30"
-        >
-          {loading && <div>Loading...</div>}
-          {error && <div className="text-red-500">{error}</div>}
-          {/* {!loading && !error && width > 0 && data.length > 0 && (
-            <Heatmap width={width} data={data} />
-          )} */}
-        </div>
+
+        <HeatmapContainer data={data}/>
       </main>
+
       <footer className="">
-  
       </footer>
     </div>
   );
