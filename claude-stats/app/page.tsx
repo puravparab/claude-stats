@@ -6,6 +6,7 @@ import { processConversations, calculateStats } from '@/lib/process';
 import { convertToHeatmapData } from '@/lib/convert';
 import Heatmap from "@/components/heatmap/heatmap"
 import { YearData } from '@/components/heatmap/types';
+import processJson from '@/lib/process_json';
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -32,11 +33,16 @@ export default function Home() {
     setLoading(true);
     fetch('/api/conversations')
       .then(res => {
-        if (!res.ok) throw new Error('Failed to fetch data');
+        if (!res.ok) {
+          console.log(res);
+          throw new Error('Failed to fetch data');
+        }
         return res.json();
       })
       .then(conversations => {
+        console.log(conversations);
         const processedData = processConversations(conversations);
+        console.log(processedData)
         const heatmapData = convertToHeatmapData(processedData);
         const statsData = calculateStats(conversations);
         setData(heatmapData);
