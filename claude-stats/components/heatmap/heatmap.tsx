@@ -11,7 +11,7 @@ import { YearData, HeatmapProps, TooltipData } from './types';
 import { WEEKS_IN_YEAR, YEAR_HEIGHT, MARGIN, DAY_LABELS, MONTH_LABELS } from './constant';
 
 
-const Heatmap: React.FC<HeatmapProps> = ({ width, data, stats }) => {
+const Heatmap: React.FC<HeatmapProps> = ({ width, data }) => {
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
 
   const handleMouseEnter = useCallback((e: React.MouseEvent, bin: any, DAY_LABELS: string[]) => {

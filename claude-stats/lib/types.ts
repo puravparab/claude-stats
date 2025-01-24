@@ -21,7 +21,11 @@ export interface Conversation {
 }
 
 export interface DailyCount {
-  [date: string]: number;
+  num_messages_started: number;
+  num_conversations_started: number;
+}
+export interface DailyCountData {
+  [date: string]: DailyCount;
 }
 
 export interface ConversationStats {

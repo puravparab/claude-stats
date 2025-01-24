@@ -2,8 +2,8 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { DailyCount, ConversationStats } from '@/lib/types';
-import { processConversations, calculateStats } from '@/lib/process';
-import { convertToHeatmapData } from '@/lib/convert';
+// import { processConversations, calculateStats } from '@/lib/process';
+import getHeatmapData from '@/lib/prepare_data';
 import Heatmap from "@/components/heatmap/heatmap"
 import { YearData } from '@/components/heatmap/types';
 import processJson from '@/lib/process_json';
@@ -12,7 +12,6 @@ export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
   const [data, setData] = useState<YearData[]>([]);
-  const [stats, setStats] = useState<ConversationStats | null>(null);;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,12 +40,9 @@ export default function Home() {
       })
       .then(conversations => {
         console.log(conversations);
-        const processedData = processConversations(conversations);
-        console.log(processedData)
-        const heatmapData = convertToHeatmapData(processedData);
-        const statsData = calculateStats(conversations);
+        const heatmapData = getHeatmapData(conversations);
+        console.log(heatmapData)
         setData(heatmapData);
-        setStats(statsData);
         setError(null);
       })
       .catch(err => {
@@ -84,9 +80,9 @@ export default function Home() {
         >
           {loading && <div>Loading...</div>}
           {error && <div className="text-red-500">{error}</div>}
-          {!loading && !error && width > 0 && data.length > 0 && stats && (
-            <Heatmap width={width} data={data} stats={stats} />
-          )}
+          {/* {!loading && !error && width > 0 && data.length > 0 && (
+            <Heatmap width={width} data={data} />
+          )} */}
         </div>
       </main>
       <footer className="">

@@ -50,6 +50,7 @@ const convertYearData = (year: number, dailyCounts: DailyCount) => {
     weekIndex++;
   }
 
+  console.log(weeks);
   return weeks;
 };
 
