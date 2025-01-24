@@ -1,6 +1,5 @@
-import { ColumnDatum, YearData } from "@/components/heatmap/types";
 import { Conversation, DailyCountData } from "./types";
-
+import { ColumnDatum, YearData } from "@/components/heatmap/types";
 
 // Get the number of messages sent each day
 const getMsgCountForEachDay = (conversations: Conversation[]): {
