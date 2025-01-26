@@ -81,7 +81,6 @@ const createYearlyData = (
       const dateKey = binDate.toISOString().split('T')[0];
       
       return {
-        count: isEmpty ? 0 : (dailyCount[dateKey] || 0),
         date: binDate,
 				day: dayIndex,
         isEmpty,

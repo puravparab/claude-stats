@@ -38,7 +38,7 @@ const Heatmap: React.FC<HeatmapProps> = ({ width, data, minColor, maxColor }) =>
   // Calculate max daily conversations
   const maxDailyConvos = Math.max(
     ...data.data.flatMap(week => 
-      week.bins.map(day => day.num_conversations || 0)
+      week.bins.map(day => day.num_messages_human || 0)
     )
   );
 
@@ -52,14 +52,14 @@ const Heatmap: React.FC<HeatmapProps> = ({ width, data, minColor, maxColor }) =>
   
   // Color scale
   const colorScale = scaleLinear<string>({
-    domain: [0, Math.max(maxDailyConvos, 1)],
+    domain: [1, Math.max(maxDailyConvos, 1)],
     range: [minColor, maxColor],
   });
   
   // Opacity scale (optional)
   const opacityScale = scaleLinear<number>({
-    domain: [0, Math.max(maxDailyConvos, 1)],
-    range: [0.15, 70],
+    domain: [0, Math.max(maxDailyConvos, 100)],
+    range: [0.15, 100],
   });
 
   return (

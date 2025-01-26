@@ -32,7 +32,7 @@ const HeatmapContainer: React.FC<HeatmapContainerProps> = ({ data }) => {
           <Heatmap 
 						width={width} 
 						data={yearData} 
-						minColor='#d977577d' 
+						minColor='#d935007d' 
 						maxColor='#d93500'/>
         </div>
       ))}
