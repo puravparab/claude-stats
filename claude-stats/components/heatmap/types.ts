@@ -21,7 +21,9 @@ export interface YearData {
   total_conversations: number; // total number of conversations for the year
   total_messages: number; // total number of messages for the year
   total_messages_human: number; // number of messages sent by human
-  total_messages_assistant: number; // number of messages sent by assistant 
+  input_tokens: number // number of input tokens
+  total_messages_assistant: number; // number of messages sent by assistant
+  output_tokens: number // number of output tokens
 }
 
 export interface HeatmapProps {

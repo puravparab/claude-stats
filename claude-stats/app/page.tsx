@@ -21,8 +21,8 @@ export default function Home() {
         return res.json();
       })
       .then(conversations => {
+        console.log(conversations)
         const heatmapData = getHeatmapData(conversations);
-        console.log(heatmapData)
         setData(heatmapData);
         setError(null);
       })

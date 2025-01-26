@@ -1,3 +1,4 @@
+import get_token_count from "./tokenizer";
 import { Conversation, DailyCountData } from "./types";
 import { ColumnDatum, YearData } from "@/components/heatmap/types";
 
@@ -18,7 +19,9 @@ const getMsgCountForEachDay = (conversations: Conversation[]): {
         num_conversations_started: 0,
 				num_messages: 0,
 				num_messages_human: 0,
-        num_messages_assistant: 0
+				input_tokens: 0,
+        num_messages_assistant: 0,
+				output_tokens: 0
 			};
     }
 		dailyCount[convDateKey].num_conversations_started++;
@@ -33,14 +36,18 @@ const getMsgCountForEachDay = (conversations: Conversation[]): {
           num_conversations_started: 0,
           num_messages: 0,
           num_messages_human: 0,
-          num_messages_assistant: 0
+					input_tokens: 0,
+          num_messages_assistant: 0,
+					output_tokens: 0
 				};
       }
       dailyCount[msgDateKey].num_messages++;
       if (message.sender === 'human') {
         dailyCount[msgDateKey].num_messages_human++;
+				dailyCount[msgDateKey].input_tokens += get_token_count(message.text);
       } else if (message.sender === 'assistant') {
         dailyCount[msgDateKey].num_messages_assistant++;
+				dailyCount[msgDateKey].output_tokens += get_token_count(message.text);
       }
       years.add(msgDate.getFullYear());
     });
@@ -80,8 +87,10 @@ const createYearlyData = (
         isEmpty,
 				num_conversations: isEmpty ? 0 : (dailyCount[dateKey]?.num_conversations_started || 0),
 				num_messages: isEmpty ? 0 : (dailyCount[dateKey]?.num_messages || 0),
+				num_messages_human: isEmpty ? 0 : (dailyCount[dateKey]?.num_messages_human || 0),
+				input_tokens: isEmpty ? 0 : (dailyCount[dateKey]?.input_tokens || 0),
 				num_messages_assistant: isEmpty ? 0 : (dailyCount[dateKey]?.num_messages_assistant || 0),
-				num_messages_human: isEmpty ? 0 : (dailyCount[dateKey]?.num_messages_human || 0)
+				output_tokens: isEmpty ? 0 : (dailyCount[dateKey]?.output_tokens || 0)
       };
     });
 
@@ -111,17 +120,25 @@ const convertToHeatmapFormat = (
     let total_messages = 0;
     let total_conversations = 0;
 		let total_messages_human = 0;
+		let input_tokens = 0;
 		let total_messages_assistant = 0;
+		let output_tokens = 0;
     Object.entries(dailyCount).forEach(([date, counts]) => {
       const currentDate = new Date(date);
       if (currentDate >= startDate && currentDate <= endDate) {
         total_messages += counts.num_messages;
         total_conversations += counts.num_conversations_started;
 				total_messages_human += counts.num_messages_human;
+				input_tokens += counts.input_tokens;
 				total_messages_assistant += counts.num_messages_assistant;
+				output_tokens += counts.output_tokens;
       }
     });
-    return { total_messages, total_conversations, total_messages_human, total_messages_assistant };
+    return { 
+			total_messages, total_conversations, 
+			total_messages_human, input_tokens,
+			total_messages_assistant, output_tokens
+		};
   };
 
   // Calculate yearly totals
@@ -129,16 +146,24 @@ const convertToHeatmapFormat = (
     let total_messages = 0;
     let total_conversations = 0;
 		let total_messages_human = 0;
+		let input_tokens = 0;
 		let total_messages_assistant = 0;
+		let output_tokens = 0;
     Object.entries(dailyCount).forEach(([date, counts]) => {
       if (new Date(date).getFullYear() === year) {
         total_messages += counts.num_messages;
         total_conversations += counts.num_conversations_started;
 				total_messages_human += counts.num_messages_human;
+				input_tokens += counts.input_tokens;
 				total_messages_assistant += counts.num_messages_assistant;
+				output_tokens += counts.output_tokens;
       }
     });
-    return { total_messages, total_conversations, total_messages_human, total_messages_assistant};
+    return { 
+			total_messages, total_conversations, 
+			total_messages_human, input_tokens,
+			total_messages_assistant, output_tokens
+		};
   };
 
 	// Process rolling year

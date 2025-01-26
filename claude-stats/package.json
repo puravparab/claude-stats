@@ -16,7 +16,8 @@
     "@visx/shape": "^3.12.0",
     "next": "15.1.5",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tiktoken": "^1.0.18"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
