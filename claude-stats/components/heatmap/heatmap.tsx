@@ -17,7 +17,7 @@ import {
 
 const Heatmap: React.FC<HeatmapProps> = ({ width, data, minColor, maxColor }) => {
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
-
+	
   // When user hovers over a day cell
   const handleMouseEnter = useCallback((e: React.MouseEvent, bin: any, DAY_LABELS: string[]) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -35,9 +35,29 @@ const Heatmap: React.FC<HeatmapProps> = ({ width, data, minColor, maxColor }) =>
     setTooltip(null);
   }, []);
 
+	const generateMonthLabels = () => {
+    const months = new Set<string>();
+    const labels: string[] = [];
+    // Go through weeks until we find a month change
+    data.data.forEach(week => {
+      const firstDay = week.bins.find(bin => !bin.isEmpty);
+      if (firstDay) {
+        const date = new Date(firstDay.date);
+				console.log(date)
+        const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
+        if (!months.has(monthKey)) {
+          months.add(monthKey);
+          labels.push(MONTH_LABELS[date.getMonth()]);
+        }
+      }
+    });
+
+    return labels;
+  };
+
   // Calculate max daily conversations
   const maxDailyConvos = Math.max(
-    ...data.data.flatMap(week => 
+		...data.data.flatMap(week => 
       week.bins.map(day => day.num_messages_human || 0)
     )
   );
@@ -84,17 +104,17 @@ const Heatmap: React.FC<HeatmapProps> = ({ width, data, minColor, maxColor }) =>
           ))}
 
           {/* Month labels */}
-          {MONTH_LABELS.map((month, i) => (
-            <text
-              key={`month-${data.year}-${i}`}
-              x={xScale(i * 4.3)}
+					{generateMonthLabels().map((month, i) => (
+						<text
+							key={`month-${data.year}-${i}`}
+							x={xScale(i * 4.3)}
               y={-10}
-              textAnchor="start"
-              fontSize={12}
-            >
-              {month}
-            </text>
-          ))}
+							textAnchor="start"
+							fontSize={12}
+						>
+							{month}
+						</text>
+					))}
 
           <HeatmapRect
             data={data.data}
