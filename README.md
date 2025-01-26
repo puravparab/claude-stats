@@ -35,4 +35,4 @@ Follow these instructions to get heatmaps and other stats:
 	npm run dev
 	```
 
-5. Go to the [website](http://localhost:3000/)
+5. Go to the website: [http://localhost:3001/](http://localhost:3001/)

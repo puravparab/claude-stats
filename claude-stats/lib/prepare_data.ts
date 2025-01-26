@@ -69,7 +69,7 @@ const createYearlyData = (
   }
 
 	const weeks: ColumnDatum[] = [];
-  let currentDate = new Date(firstSunday);
+  const currentDate = new Date(firstSunday);
   let weekIndex = 0;
 	// Iterate through every week and populate daily data
 	while (currentDate <= endDate) {

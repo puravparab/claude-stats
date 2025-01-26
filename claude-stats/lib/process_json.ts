@@ -50,7 +50,7 @@ const processJson = (): ProcessedJSON=> {
         data: parsedContent,
         status: 200
       };
-		} catch (parseError) {
+		} catch (e) {
       return { 
         error: 'Invalid JSON format in conversations.json',
         status: 400

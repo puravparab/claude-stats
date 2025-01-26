@@ -7,11 +7,8 @@ import { YearData } from '@/components/heatmap/types';
 
 export default function Home() {
   const [data, setData] = useState<YearData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setLoading(true);
     fetch('/api/conversations')
       .then(res => {
         if (!res.ok) {
@@ -24,15 +21,10 @@ export default function Home() {
         console.log(conversations)
         const heatmapData = getHeatmapData(conversations);
         setData(heatmapData);
-        setError(null);
       })
       .catch(err => {
         console.error('Error:', err);
-        setError('Failed to load data');
       })
-      .finally(() => {
-        setLoading(false);
-      });
   }, []);
 
   return (
