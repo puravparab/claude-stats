@@ -17,7 +17,7 @@ import {
 
 const Heatmap: React.FC<HeatmapProps> = ({ width, data, minColor, maxColor }) => {
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
-	
+
   // When user hovers over a day cell
   const handleMouseEnter = useCallback((e: React.MouseEvent, bin: any, DAY_LABELS: string[]) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -90,18 +90,21 @@ const Heatmap: React.FC<HeatmapProps> = ({ width, data, minColor, maxColor }) =>
           left={MARGIN.left}
         >
           {/* Day labels */}
-          {DAY_LABELS.map((day, i) => (
-            <text
-              key={`day-${data.year}-${i}`}
-              x={-10}
-              y={yScale(i) + binHeight / 2}
-              textAnchor="end"
-              alignmentBaseline="middle"
-              fontSize={12}
-            >
-              {day}
-            </text>
-          ))}
+          {DAY_LABELS.map((day, i) => {
+						if (i !== 1 && i !== 3 && i !== 5) return null;
+						return (
+							<text
+								key={`day-${data.year}-${i}`}
+								x={-10}
+								y={yScale(i) + binHeight / 2}
+								textAnchor="end"
+								alignmentBaseline="middle"
+								fontSize={12}
+							>
+								{day}
+							</text>
+						);
+					})}
 
           {/* Month labels */}
 					{generateMonthLabels().map((month, i) => (
