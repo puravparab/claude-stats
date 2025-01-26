@@ -35,9 +35,29 @@ const Heatmap: React.FC<HeatmapProps> = ({ width, data, minColor, maxColor }) =>
     setTooltip(null);
   }, []);
 
+	const generateMonthLabels = () => {
+    const months = new Set<string>();
+    const labels: string[] = [];
+    // Go through weeks until we find a month change
+    data.data.forEach(week => {
+      const firstDay = week.bins.find(bin => !bin.isEmpty);
+      if (firstDay) {
+        const date = new Date(firstDay.date);
+				console.log(date)
+        const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
+        if (!months.has(monthKey)) {
+          months.add(monthKey);
+          labels.push(MONTH_LABELS[date.getMonth()]);
+        }
+      }
+    });
+
+    return labels;
+  };
+
   // Calculate max daily conversations
   const maxDailyConvos = Math.max(
-    ...data.data.flatMap(week => 
+		...data.data.flatMap(week => 
       week.bins.map(day => day.num_messages_human || 0)
     )
   );
@@ -70,31 +90,34 @@ const Heatmap: React.FC<HeatmapProps> = ({ width, data, minColor, maxColor }) =>
           left={MARGIN.left}
         >
           {/* Day labels */}
-          {DAY_LABELS.map((day, i) => (
-            <text
-              key={`day-${data.year}-${i}`}
-              x={-10}
-              y={yScale(i) + binHeight / 2}
-              textAnchor="end"
-              alignmentBaseline="middle"
-              fontSize={12}
-            >
-              {day}
-            </text>
-          ))}
+          {DAY_LABELS.map((day, i) => {
+						if (i !== 1 && i !== 3 && i !== 5) return null;
+						return (
+							<text
+								key={`day-${data.year}-${i}`}
+								x={-10}
+								y={yScale(i) + binHeight / 2}
+								textAnchor="end"
+								alignmentBaseline="middle"
+								fontSize={12}
+							>
+								{day}
+							</text>
+						);
+					})}
 
           {/* Month labels */}
-          {MONTH_LABELS.map((month, i) => (
-            <text
-              key={`month-${data.year}-${i}`}
-              x={xScale(i * 4.3)}
+					{generateMonthLabels().map((month, i) => (
+						<text
+							key={`month-${data.year}-${i}`}
+							x={xScale(i * 4.3)}
               y={-10}
-              textAnchor="start"
-              fontSize={12}
-            >
-              {month}
-            </text>
-          ))}
+							textAnchor="start"
+							fontSize={12}
+						>
+							{month}
+						</text>
+					))}
 
           <HeatmapRect
             data={data.data}

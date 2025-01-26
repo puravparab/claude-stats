@@ -1,4 +1,5 @@
 import get_token_count from "./tokenizer";
+import { getLocalDateKey } from "./dates";
 import { Conversation, DailyCountData } from "./types";
 import { ColumnDatum, YearData } from "@/components/heatmap/types";
 
@@ -12,8 +13,7 @@ const getMsgCountForEachDay = (conversations: Conversation[]): {
 
 	conversations.forEach(conversation => {
 		// Track conversation
-		const convDate = new Date(conversation.created_at);
-		const convDateKey = convDate.toISOString().split('T')[0];
+		const { dateKey: convDateKey, year } = getLocalDateKey(conversation.created_at);
 		if (!dailyCount[convDateKey]) {
       dailyCount[convDateKey] = {
         num_conversations_started: 0,
@@ -25,12 +25,11 @@ const getMsgCountForEachDay = (conversations: Conversation[]): {
 			};
     }
 		dailyCount[convDateKey].num_conversations_started++;
-    years.add(convDate.getFullYear());
+    years.add(year);
 
 		// Track messages
     conversation.chat_messages.forEach(message => {
-      const msgDate = new Date(message.created_at);
-      const msgDateKey = msgDate.toISOString().split('T')[0];
+      const { dateKey: msgDateKey, year: msgYear } = getLocalDateKey(message.created_at);
       if (!dailyCount[msgDateKey]) {
         dailyCount[msgDateKey] = { 
           num_conversations_started: 0,
@@ -49,7 +48,7 @@ const getMsgCountForEachDay = (conversations: Conversation[]): {
         dailyCount[msgDateKey].num_messages_assistant++;
 				dailyCount[msgDateKey].output_tokens += get_token_count(message.text);
       }
-      years.add(msgDate.getFullYear());
+			years.add(msgYear);
     });
   });
 
@@ -64,9 +63,12 @@ const createYearlyData = (
 	// Get the first sunday of the calendar view 
 	// (Note: this could be in the previous year)
 	const firstSunday = new Date(startDate);
-  while (firstSunday.getDay() !== 0) {
-    firstSunday.setDate(firstSunday.getDate() - 1);
-  }
+	// If start date is already a Sunday, we don't need to move backwards
+	if (firstSunday.getDay() !== 0) {
+		while (firstSunday.getDay() !== 0) {
+			firstSunday.setDate(firstSunday.getDate() - 1);
+		}
+	}
 
 	const weeks: ColumnDatum[] = [];
   const currentDate = new Date(firstSunday);
@@ -78,7 +80,7 @@ const createYearlyData = (
       binDate.setDate(binDate.getDate() + dayIndex);
       
       const isEmpty = binDate < startDate || binDate > endDate;
-      const dateKey = binDate.toISOString().split('T')[0];
+      const { dateKey } = getLocalDateKey(binDate);
       
       return {
         date: binDate,
@@ -111,8 +113,9 @@ const convertToHeatmapFormat = (
   years: Set<number>
 ): YearData[] => {
   const endDate = new Date();
+	endDate.setHours(23, 59, 59, 999);
   const startDate = new Date();
-  startDate.setDate(endDate.getDate() - 365); // rolling 365 days
+  startDate.setDate(endDate.getDate() - 364); // rolling 365 days
 
 	// For rolling year view, we need to calculate totals differently
   const getRollingYearTotals = () => {
@@ -196,8 +199,6 @@ const getHeatmapData = (
 ): YearData[]=> {
 	// Get daily message and conversation counts
 	const { dailyCount, years } = getMsgCountForEachDay(conversations);
-
-	console.log(dailyCount);
 	return convertToHeatmapFormat(dailyCount, years);
 };
 
