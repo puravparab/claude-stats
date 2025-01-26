@@ -14,7 +14,10 @@ export const Tooltip = memo(({ data, offsetX = 10, offsetY = -40 }: TooltipProps
         position: 'fixed'
       }}
     >
-      <p>{data.count} msgs sent on {data.date.toLocaleDateString()}</p>
+      {data.count == 0
+        ? <p>No msgs sent on {data.date.toLocaleDateString()}</p>
+        : <p>{data.count} msgs sent on {data.date.toLocaleDateString()}</p>
+      }
     </div>
   );
 });
