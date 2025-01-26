@@ -1,1 +1,1 @@
-Add Claude conversation data to data/ directory
+Add Claude conversation data (conversations.json) to data/ directory

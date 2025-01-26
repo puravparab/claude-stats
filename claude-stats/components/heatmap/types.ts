@@ -4,6 +4,8 @@ export interface BinDatum {
   isEmpty: boolean; // to handle empty cells
   num_conversations: number; // number of conversations each day
   num_messages: number // number of messages sent each day
+  num_messages_human: number // number of messages sent by human
+  num_messages_assistant: number // number of messages sent by assistant 
 }
 
 export interface ColumnDatum {
@@ -18,6 +20,10 @@ export interface YearData {
 	data: ColumnDatum[];
   total_conversations: number; // total number of conversations for the year
   total_messages: number; // total number of messages for the year
+  total_messages_human: number; // number of messages sent by human
+  input_tokens: number // number of input tokens
+  total_messages_assistant: number; // number of messages sent by assistant
+  output_tokens: number // number of output tokens
 }
 
 export interface HeatmapProps {

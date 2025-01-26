@@ -21,20 +21,13 @@ export interface Conversation {
 }
 
 export interface DailyCount {
-  num_messages_started: number;
   num_conversations_started: number;
+  num_messages: number;
+  num_messages_human: number;
+  input_tokens: number;
+  num_messages_assistant: number;
+  output_tokens: number;
 }
 export interface DailyCountData {
   [date: string]: DailyCount;
-}
-
-export interface ConversationStats {
-  totalConversations: number;
-  totalMessages: number;
-  byYear: {
-    [year: number]: {
-      conversations: number;
-      messages: number;
-    }
-  };
 }
