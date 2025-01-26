@@ -7,7 +7,6 @@ const HeatmapStats: React.FC<HeatmapStatsProps> = ( {yearData} ) => {
     if (num >= 10000) return `${(num / 10000).toFixed(1)}K`;
     return num.toString();
   }
-
   return (
     <div className="flex flex-col gap-2 mb-2">
       <h2 className="text-[--primary-color] font-bold text-2xl">
