@@ -59,7 +59,7 @@ const Heatmap: React.FC<HeatmapProps> = ({ width, data, minColor, maxColor }) =>
   // Opacity scale (optional)
   const opacityScale = scaleLinear<number>({
     domain: [0, Math.max(maxDailyConvos, 1)],
-    range: [0.15, 100],
+    range: [0.15, 70],
   });
 
   return (
@@ -106,7 +106,7 @@ const Heatmap: React.FC<HeatmapProps> = ({ width, data, minColor, maxColor }) =>
             binHeight={binHeight}
             gap={2}
             bins={(d) => d.bins}
-            count={(d) => d.num_conversations}
+            count={(d) => d.num_messages_human}
           >
             {(heatmap) =>
               heatmap.map((heatmapBins) =>

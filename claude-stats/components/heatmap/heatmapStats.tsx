@@ -7,7 +7,7 @@ const HeatmapStats: React.FC<HeatmapStatsProps> = ( {yearData} ) => {
         {yearData.yearLabel}
       </h2>
       
-      <div className="grid grid-cols-3 gap-4 max-w-sm">
+      <div className="flex flex-row gap-4 max-w-sm">
         <div className="bg-[--background] rounded-lg border border-[--primary-color] p-2 shadow-sm">
           <div className="text-sm text-gray-600">Conversations</div>
           <div className="text-[--primary-color] text-xl font-semibold">
@@ -16,9 +16,9 @@ const HeatmapStats: React.FC<HeatmapStatsProps> = ( {yearData} ) => {
         </div>
 
         <div className="bg-[--background] rounded-lg border border-[--primary-color] p-2 shadow-sm">
-          <div className="text-sm text-gray-600">Messages</div>
+          <div className="text-sm text-gray-600">Prompts sent</div>
           <div className="text-[--primary-color] text-xl font-semibold">
-            {yearData.total_messages.toLocaleString()}
+            {yearData.total_messages_human.toLocaleString()}
           </div>
         </div>
       </div>

@@ -15,8 +15,10 @@ const getMsgCountForEachDay = (conversations: Conversation[]): {
 		const convDateKey = convDate.toISOString().split('T')[0];
 		if (!dailyCount[convDateKey]) {
       dailyCount[convDateKey] = {
-				num_messages_started: 0, 
-				num_conversations_started: 0 
+        num_conversations_started: 0,
+				num_messages: 0,
+				num_messages_human: 0,
+        num_messages_assistant: 0
 			};
     }
 		dailyCount[convDateKey].num_conversations_started++;
@@ -28,11 +30,18 @@ const getMsgCountForEachDay = (conversations: Conversation[]): {
       const msgDateKey = msgDate.toISOString().split('T')[0];
       if (!dailyCount[msgDateKey]) {
         dailyCount[msgDateKey] = { 
-					num_messages_started: 0, 
-					num_conversations_started: 0 
+          num_conversations_started: 0,
+          num_messages: 0,
+          num_messages_human: 0,
+          num_messages_assistant: 0
 				};
       }
-      dailyCount[msgDateKey].num_messages_started++;
+      dailyCount[msgDateKey].num_messages++;
+      if (message.sender === 'human') {
+        dailyCount[msgDateKey].num_messages_human++;
+      } else if (message.sender === 'assistant') {
+        dailyCount[msgDateKey].num_messages_assistant++;
+      }
       years.add(msgDate.getFullYear());
     });
   });
@@ -70,7 +79,9 @@ const createYearlyData = (
 				day: dayIndex,
         isEmpty,
 				num_conversations: isEmpty ? 0 : (dailyCount[dateKey]?.num_conversations_started || 0),
-				num_messages: isEmpty ? 0 : (dailyCount[dateKey]?.num_messages_started || 0)
+				num_messages: isEmpty ? 0 : (dailyCount[dateKey]?.num_messages || 0),
+				num_messages_assistant: isEmpty ? 0 : (dailyCount[dateKey]?.num_messages_assistant || 0),
+				num_messages_human: isEmpty ? 0 : (dailyCount[dateKey]?.num_messages_human || 0)
       };
     });
 
@@ -99,27 +110,35 @@ const convertToHeatmapFormat = (
   const getRollingYearTotals = () => {
     let total_messages = 0;
     let total_conversations = 0;
+		let total_messages_human = 0;
+		let total_messages_assistant = 0;
     Object.entries(dailyCount).forEach(([date, counts]) => {
       const currentDate = new Date(date);
       if (currentDate >= startDate && currentDate <= endDate) {
-        total_messages += counts.num_messages_started;
+        total_messages += counts.num_messages;
         total_conversations += counts.num_conversations_started;
+				total_messages_human += counts.num_messages_human;
+				total_messages_assistant += counts.num_messages_assistant;
       }
     });
-    return { total_messages, total_conversations };
+    return { total_messages, total_conversations, total_messages_human, total_messages_assistant };
   };
 
   // Calculate yearly totals
   const getYearTotals = (year: number) => {
     let total_messages = 0;
     let total_conversations = 0;
+		let total_messages_human = 0;
+		let total_messages_assistant = 0;
     Object.entries(dailyCount).forEach(([date, counts]) => {
       if (new Date(date).getFullYear() === year) {
-        total_messages += counts.num_messages_started;
+        total_messages += counts.num_messages;
         total_conversations += counts.num_conversations_started;
+				total_messages_human += counts.num_messages_human;
+				total_messages_assistant += counts.num_messages_assistant;
       }
     });
-    return { total_messages, total_conversations };
+    return { total_messages, total_conversations, total_messages_human, total_messages_assistant};
   };
 
 	// Process rolling year
@@ -154,6 +173,7 @@ const getHeatmapData = (
 	// Get daily message and conversation counts
 	const { dailyCount, years } = getMsgCountForEachDay(conversations);
 
+	console.log(dailyCount);
 	return convertToHeatmapFormat(dailyCount, years);
 };
 
