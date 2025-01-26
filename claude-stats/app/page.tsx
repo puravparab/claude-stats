@@ -46,12 +46,11 @@ export default function Home() {
       <main 
         className="
           flex flex-col justify-center items-center
-          w-full 
-          sm:w-2/3 gap-8 m-8
+          w-screen sm:w-11/12 gap-8 my-2 md:my-8 mx-2 sm:mx-4
         "
       >
         <h1 className="
-          text-center font-extrabold text-2xl sm:text-5xl py-2
+          text-center font-extrabold text-3xl sm:text-5xl py-2
         ">
           Claude Stats
         </h1>

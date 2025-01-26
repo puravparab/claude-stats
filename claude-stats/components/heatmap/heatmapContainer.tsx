@@ -24,12 +24,16 @@ const HeatmapContainer: React.FC<HeatmapContainerProps> = ({ data }) => {
 	return (
 		<div
 			ref={containerRef}
-			className="flex flex-col gap-0 w-full p-4 z-30"
+			className="flex flex-col gap-0 w-full lg:max-w-[850px] p-4 z-30"
 		>
 			{width > 0 && data.map((yearData) => (
         <div key={yearData.year} className="mb-2">
 					<HeatmapStats yearData={yearData}/>
-          <Heatmap width={width} data={yearData} minColor='#d977577d' maxColor='#d93500'/>
+          <Heatmap 
+						width={width} 
+						data={yearData} 
+						minColor='#d977577d' 
+						maxColor='#d93500'/>
         </div>
       ))}
 
