@@ -59,7 +59,7 @@ const Heatmap: React.FC<HeatmapProps> = ({ width, data, minColor, maxColor }) =>
   // Opacity scale (optional)
   const opacityScale = scaleLinear<number>({
     domain: [0, Math.max(maxDailyConvos, 100)],
-    range: [0.15, 100],
+    range: [0.2, 100],
   });
 
   return (
