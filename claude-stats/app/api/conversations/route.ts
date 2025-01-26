@@ -1,21 +1,28 @@
-import { join } from 'path';
-import { readFileSync } from 'fs';
 import { NextResponse } from 'next/server';
+import processJson from '@/lib/process_json';
 
 export const revalidate = 300;
 
 export const GET = async () => {
   try {
-    const currentDir = process.cwd();
-    const filePath = join(currentDir, '../data/conversations.json');
-    const fileContent = readFileSync(filePath, 'utf-8');
-    const parsedContent = JSON.parse(fileContent);
-    return NextResponse.json(parsedContent);
-  } catch (error: any) {
-    console.error('Error reading file:', error);
+    const result = processJson();
+    if (result.error) {
+      return NextResponse.json(
+        { error: result.error },
+        { status: result.status }
+      );
+    }
+    if (!result.data) {
+      return NextResponse.json(
+        { error: 'Internal server error: No data retrieved.' },
+        { status: 500 }
+      );
+    }
+    return NextResponse.json(result.data, { status: result.status });
+  } catch (error) {
     return NextResponse.json(
-      { error: 'Failed to load conversations data' }, 
+      { error: `Internal server error: ${error}` },
       { status: 500 }
     );
   }
-}
+};

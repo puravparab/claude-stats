@@ -6,6 +6,7 @@
   --background: #f5f4ed;
   --primary-color: #d97757;
   --secondary-color: #1e1e1e;
+  --tertiary-color: #f2ebe3;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -13,6 +14,7 @@
     --background: #f5f4ed;
     --primary-color: #d97757;
     --secondary-color: #1e1e1e;
+    --tertiary-color: #f2ebe3;
   }
 }
 
